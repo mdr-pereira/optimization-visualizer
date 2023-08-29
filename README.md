@@ -18,4 +18,8 @@ We want to be able to provide visualization of a landscape function within given
 - [ ] Move implementation to a javascript webpage, allowing interaction (hard).
 - [ ] Add option to utilize 3D landscape functions and optimizers.
 
+## Links
+
+- Slack Workspace : https://join.slack.com/t/campus-p6c8258/shared_invite/zt-22adl0eqs-cwXQaR_fCK9uVx~PvMUL2w
+
  
