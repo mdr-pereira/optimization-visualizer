@@ -12,8 +12,5 @@ class OptimizerInterface(abc.ABC):
         raise NotImplementedError
     
     @abc.abstractclassmethod
-    def _step(data: List[float32], i: int):
+    def _step(data: List[float32], i: int) -> Tuple(int, float32):
         raise NotImplementedError
-    
-
-    

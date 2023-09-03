@@ -3,28 +3,15 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from typing import Callable, List
 import random as rand
-import sympy as sp
 
 """
 Proof-of-concept
 """
 
 # Get the polynomial equation as a user input
-equation_str = input("Enter a polynomial equation (e.g., 2*x**2 + 3*x - 5): ")
+
 
 # Define a symbolic variable
-x = sp.symbols('x')
-
-# Parse the input string to create a function
-try:
-    equation = sp.sympify(equation_str)
-    fun = sp.lambdify(x, equation, 'numpy')
-except sp.SympifyError:
-    print("Invalid input. Please enter a valid polynomial equation.")
-    exit(1)
-
-XBOUND_MIN = -30
-XBOUND_MAX = 30
 
 def simple_walk(data: List[np.float32]):
     res_i = []
@@ -52,10 +39,7 @@ def simple_walk(data: List[np.float32]):
 
     return res_i, res_data
 
-def generate_datapoints(function: Callable[[float], float], step: float = 1.0):
-    temp = np.arange(XBOUND_MIN, XBOUND_MAX, step, dtype=np.float32)
 
-    return list(map(function, temp))
 
 def anim_func(f, data_i, data, line: plt.Line2D):
     line.set_data((data_i[:f],  data[:f]))
