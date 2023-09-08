@@ -1,6 +1,7 @@
 import function_preprocess
 import optimizer_interface
 import solution_preparation
+import visualization
 
 
 """
@@ -14,12 +15,15 @@ def main_loop():
     landscape_eq_str = input("Enter an equation with parameter x. (e.g., 2*x**2 + 3*x - 5): ")
     optimizer_choice = input("Select an Optimizer by the number: 1.Hill-Climber ")
     function = function_preprocess.process_function_str(landscape_eq_str)
-    values = function_preprocess.generate_datapoints(function)
+    data = function_preprocess.generate_datapoints(function,0.1)
+    res_i = []
+    res_data = []
 
     if optimizer_choice == 1:
-        res_i, res_data = optimizer_interface.MyOptimizer.simple_walk(values)
+        res_i, res_data = optimizer_interface.MyOptimizer.simple_walk(data)
     else:
         pass
+    visualization.plot(res_i,res_data,data)
 
 
 
