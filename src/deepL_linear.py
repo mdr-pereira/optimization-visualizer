@@ -32,6 +32,7 @@ def train(model, inputs, outputs, learning_rate):
   model.W.assign_sub(learning_rate * dW)
   model.b.assign_sub(learning_rate * db)
 
+
 TRUE_W = 3.0
 TRUE_b = 2.0
 SEED = 3141
