@@ -1,5 +1,5 @@
-import sympy as sp
 from typing import Callable
+import sympy as sp
 import numpy as np
 
 from constants import XBOUND_MAX, XBOUND_MIN
