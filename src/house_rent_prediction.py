@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 import deepL_linear
 
 
-df=pd.read_csv('../House_Rent_Dataset.csv')
+df=pd.read_csv('..\House_Rent_Dataset.csv')
 print(df.head())
 
 # Pre-Processing
