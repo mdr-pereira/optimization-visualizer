@@ -1,3 +1,4 @@
+
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -26,7 +27,7 @@ def train(model, inputs, outputs, learning_rate):
   model.W.assign_sub(learning_rate * dW)
   model.b.assign_sub(learning_rate * db)
 
-def plot_regression(SEED=3141,XBOUND_MIN = -30,XBOUND_MAX = 30,NUM_EXAMPLES = 8194,BATCH_SIZE = 268,LR = 0.1 ):
+def plot_regression(SEED=3141,XBOUND_MIN = -30,XBOUND_MAX = 30,NUM_EXAMPLES = 8194,BATCH_SIZE = 268,LR = 0.1,EPOCHS = 100 ):
 
   equation_str = input("Enter a linear equation (e.g.,3*x - 5): ")
   # Define a symbolic variable
