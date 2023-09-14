@@ -4,7 +4,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-import deepL_linear
+import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error,r2_score
+from sklearn.model_selection import train_test_split,cross_val_score,cross_val_predict
+from sklearn.preprocessing import scale
+from sklearn.linear_model import Ridge,Lasso
+from sklearn import model_selection
+from sklearn.linear_model import RidgeCV,LassoCV
+from deepL_linear import Model
 
 
 df=pd.read_csv('../House_Rent_Dataset.csv')
@@ -76,6 +86,10 @@ y.head()
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-model = deepL_linear.Model()
-deepL_linear.train(model, X_train, y_train, learning_rate=LR)
+sns.scatterplot(data=X_train)
+LR = 0.01
+model = Model()
+model.fit(X_train,y_train)
+y_pred = model.predict(X_test)
+# model = deepL_linear.Model()
+# deepL_linear.train(model, X_train, y_train, learning_rate=LR)
