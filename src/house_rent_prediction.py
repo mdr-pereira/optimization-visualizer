@@ -17,7 +17,7 @@ from sklearn.linear_model import RidgeCV,LassoCV
 from deepL_linear import Model
 
 
-df=pd.read_csv('../House_Rent_Dataset.csv')
+df=pd.read_csv('..\House_Rent_Dataset.csv')
 print(df.head())
 
 # Pre-Processing
