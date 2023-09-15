@@ -22,6 +22,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
+from matplotlib.animation import FuncAnimation
+
+# Regression libraries
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import SGDRegressor
+from sklearn.metrics import mean_squared_error
+
+
 
 
 
@@ -96,9 +105,10 @@ plt.show()
 
 # Plot of each feature to show normal distribution
 sns.pairplot(df, hue ='Rent')
-# to show
 plt.show()
 
+sns.heatmap(df.corr(), annot=True)
+plt.show()
 # Scatter Plot on House Rents vs House Sizes
 fig = px.scatter(df, x='Size', y='Rent', color='BHK', size='Size', hover_data=['Rent'])
 fig.update_layout(title='House Rents vs House Sizes',
@@ -108,34 +118,137 @@ fig.show()
 
 
 
-# # Training the Model
+# ---------------------------------------Training the Model---------------------------------------------------
 
-# hrp = df[['BHK', 'Rent', 'Size', 'Bathroom']]
-# X = hrp.drop('Rent',axis=1)
-# X.head()
+X = df[['BHK', 'Size', 'Bathroom']]
+y = df['Rent']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# y = hrp["Rent"]
-# y.head()
+
+# Initialize the SGDRegressor model
+sgd_reg = SGDRegressor(loss='squared_loss', penalty='l2', alpha=0.01, max_iter=1, random_state=42)
+
+# Fit model
+
+# Obtain weights and intersection values for plots
+
+
+# Plot regression and optimization process
+
+# There are code snippets i tried but didnt work as expected so you can try also
+
+# Initialize the scatter plot (empty for now)
+# sc = ax.scatter(X_scaled[:, 1], y, c='b', label='Actual Rent')
+# line, = ax.plot([], [], 'r', lw=2, label='Line of Best Fit')
+# ax.set_xlabel('Size (Standardized)')
+# ax.set_ylabel('Rent')
+# ax.set_title('Linear Regression Animation')
+# ax.legend()
+
+# # Function to initialize the plot
+# def init():
+#     line.set_data([], [])
+#     return line,
+
+# # Function to update the plot for each epoch
+# def update(epoch):
+#     sgd_reg.partial_fit(X_scaled, y)
+#     y_pred = sgd_reg.predict(X_scaled)
+#     mse = mean_squared_error(y, y_pred)
+#     line.set_data(X_scaled[:, 1], y_pred)
+#     ax.set_title(f'Epoch {epoch + 1}, MSE: {mse:.2f}')
+#     return line,
+
+# # Create the animation
+# animation = FuncAnimation(fig, update, init_func=init, frames=1000, repeat=False, blit=True)
+
+# # Display the animation
+# plt.show()
+# print("DOne")
 
 
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-# sns.scatterplot(data=X_train)
-# LR = 0.01
-# model = Model()
-# # train(model,X_train,y_train,LR)
-# # y_pred = model.predict(X_test)
-# # model = deepL_linear.Model()
-# # deepL_linear.train(model, X_train, y_train, learning_rate=LR)
-# fig = plt.figure(dpi=100, figsize=(8, 3))
+# scaler = StandardScaler()
+# X_scaled = scaler.fit_transform(X_train)
+# X_test_scaled = scaler.transform(X_test)
+# # Initialize the SGDRegressor model
+# sgd_reg = SGDRegressor(loss='squared_loss', penalty='l2', alpha=0.01, max_iter=1, random_state=42)
+# fig, ax = plt.subplots()
+# plt.close()  # Close the initial empty plot window
 
-#   # Regression Line
-# ax1 = fig.add_subplot(131)
-# ax1.set_title("Fitted Line")
-# ax1.set_xlabel("x")
-# ax1.set_ylabel("y")
-#   # ax1.set_xlim(-3, 2.5)
-#   # ax1.set_ylim(-8, 11)
-# p10, = ax1.plot(X_train, y_train, 'r.', alpha=0.1) # full dataset
-# p11, = ax1.plot([], [], 'C3.') # batch, color Red
-# p12, = ax1.plot([], [], 'k') # fitted line, color Black
+
+# # Initialize the scatter plot (empty for now)
+# sc = ax.scatter(X_scaled[:, 1], y, c='b', label='Actual Rent')
+# line, = ax.plot([], [], 'r', lw=2, label='Line of Best Fit')
+# ax.set_xlabel('Size (Standardized)')
+# ax.set_ylabel('Rent')
+# ax.set_title('Linear Regression Animation')
+# ax.legend()
+
+# # Function to initialize the plot
+# def init():
+#     line.set_data([], [])
+#     return line,
+
+# # Function to update the plot for each epoch
+# def update(epoch):
+#     sgd_reg.partial_fit(X_scaled, y)
+#     y_pred = sgd_reg.predict(X_scaled)
+#     mse = mean_squared_error(y, y_pred)
+#     line.set_data(X_scaled[:, 1], y_pred)
+#     ax.set_title(f'Epoch {epoch + 1}, MSE: {mse:.2f}')
+#     return line,
+
+# # Create the animation
+# animation = FuncAnimation(fig, update, init_func=init, frames=1000, repeat=False, blit=True)
+
+# # Display the animation
+# plt.show()
+
+# # Build and train the SGDRegressor model
+# sgd_reg = SGDRegressor(loss='squared_loss', penalty='l2', alpha=0.01, max_iter=1000, random_state=42)
+# mse_history = []  # To store MSE values during training
+
+# # Training loop
+# for epoch in range(10):  # You can adjust the number of epochs as needed
+#     sgd_reg.partial_fit(X_train_scaled, y_train)
+#     y_pred = sgd_reg.predict(X_train_scaled)
+#     mse = mean_squared_error(y_train, y_pred)
+#     mse_history.append(mse)
+
+# # Visualize the training process (MSE vs. epoch)
+# epochs = range(1, len(mse_history) + 1)
+# plt.plot(epochs, mse_history, marker='o')
+# plt.xlabel('Epoch')
+# plt.ylabel('Mean Squared Error (MSE)')
+# plt.title('Training Loss (MSE) vs. Epoch')
+# plt.grid(True)
+# plt.show()
+
+# # Make predictions on the test data
+# y_pred = sgd_reg.predict(X_test_scaled)
+
+# # Evaluate the model
+# mse = mean_squared_error(y_test, y_pred)
+# print(f'Mean Squared Error on Test Data: {mse}')
+
+# # sns.scatterplot(data=X_train)
+# # LR = 0.01
+# # model = Model()
+# # # train(model,X_train,y_train,LR)
+# # # y_pred = model.predict(X_test)
+# # # model = deepL_linear.Model()
+# # # deepL_linear.train(model, X_train, y_train, learning_rate=LR)
+# # fig = plt.figure(dpi=100, figsize=(8, 3))
+
+# #   # Regression Line
+# # ax1 = fig.add_subplot(131)
+# # ax1.set_title("Fitted Line")
+# # ax1.set_xlabel("x")
+# # ax1.set_ylabel("y")
+# #   # ax1.set_xlim(-3, 2.5)
+# #   # ax1.set_ylim(-8, 11)
+# # p10, = ax1.plot(X_train, y_train, 'r.', alpha=0.1) # full dataset
+# # p11, = ax1.plot([], [], 'C3.') # batch, color Red
+# # p12, = ax1.plot([], [], 'k') # fitted line, color Black
 
