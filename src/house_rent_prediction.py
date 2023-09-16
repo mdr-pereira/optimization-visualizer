@@ -23,6 +23,7 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 from matplotlib.animation import FuncAnimation
+# import deepL_linear as dp #changes suren
 
 # Regression libraries
 from sklearn.model_selection import train_test_split
@@ -35,7 +36,7 @@ from sklearn.metrics import mean_squared_error
 
 
 
-df=pd.read_csv('../House_Rent_Dataset.csv')
+df=pd.read_csv(r"C:\Users\studi\OneDrive\Desktop\Applied computer science\Semester_2\viz\optimization-visualizer\House_Rent_Dataset.csv")
 
 
 
@@ -126,7 +127,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 
 # Initialize the SGDRegressor model
-sgd_reg = SGDRegressor(loss='squared_loss', penalty='l2', alpha=0.01, max_iter=1, random_state=42)
+# sgd_reg = SGDRegressor(loss='squared_loss', penalty='l2', alpha=0.01, max_iter=1, random_state=42)
 
 # Fit model
 
