@@ -112,13 +112,7 @@ plt.show()
 sns.pairplot(df, hue ='Rent')
 plt.show()
 
-sns.heatmap(df.corr(), annot=True)
-plt.show()
-# Scatter Plot on House Rents vs House Sizes
-fig = px.scatter(df, x='Size', y='Rent', color='BHK', size='Size', hover_data=['Rent'])
-fig.update_layout(title='House Rents vs House Sizes',
-                  yaxis_zeroline=False, xaxis_zeroline=False)
-fig.show()
+
 
 
 
