@@ -97,8 +97,7 @@ def update(epoch):
 
     return p11, p12, p20
 
-def train_on_dataset():
-    pass
+
 ani = animation.FuncAnimation(fig, update, frames=range(1, EPOCHS), init_func=init, blit=True, interval=100)
 plt.close()
 ani

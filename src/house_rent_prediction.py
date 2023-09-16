@@ -23,13 +23,17 @@ import seaborn as sns
 import plotly.express as px
 import plotly.graph_objects as go
 from matplotlib.animation import FuncAnimation
-# import deepL_linear as dp #changes suren
+from matplotlib import animation, rc
+rc('animation', html='html5')
 
 # Regression libraries
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_squared_error
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
 
 
 
@@ -91,7 +95,7 @@ plt.show()
 # Different Types of Furnishing Status
 furnishing_df = df['Furnishing Status'].value_counts()
 furnishing_df
-furnishing_df
+
 plt.figure(figsize = (20, 8))
 explode = (0, 0, 0.1)
 colors = sns.color_palette('pastel')[0:5]
@@ -124,6 +128,80 @@ fig.show()
 X = df[['BHK', 'Size', 'Bathroom']]
 y = df['Rent']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+print(f"TrainingSet Shape: {X_train}")
+
+#parameters
+NUM_EXAMPLES = 1024
+BATCH_SIZE = 64
+EPOCHS = 150 # actually steps
+LR = 0.01
+SEED = 3141
+Ws, bs, xs, ys, ls = [], [], [], [], []
+
+ds = (tf.data.Dataset
+      .from_tensor_slices((X_train, y_train))
+      .repeat()
+      .shuffle(1000, seed=SEED)
+      .batch(BATCH_SIZE))
+ds = iter(ds)
+
+model = keras.Sequential([
+    layers.Input(shape=(3796,3)),
+    layers.Dense(16, activation='relu'),
+    layers.Dense(8, activation='relu'),
+    layers.Dense(1)
+])
+model.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=LR), 
+    loss='mse')
+
+
+fig = plt.figure(dpi=150, figsize=(8, 3))
+# Regression Curve
+ax1 = fig.add_subplot(121)
+ax1.set_title("Fitted Curve")
+ax1.set_xlabel("x")
+ax1.set_ylabel("y")
+p10 = ax1.plot(X_train, y_train, 'r.', alpha=0.1) # full dataset
+p11, = ax1.plot([], [], 'C3.') # batch
+p12, = ax1.plot([], [], 'k') # fitted line
+
+# Loss
+ax2 = fig.add_subplot(122)
+ax2.set_title("Training Loss")
+ax2.set_xlabel("Batches Seen")
+ax2.set_xlim(0, EPOCHS)
+ax2.set_ylim(0, 40)
+p20, = ax2.plot([], [], 'C0')
+
+fig.tight_layout()
+
+def init():
+    return [p10]
+
+def update(epoch):
+    x, y = next(ds)
+    y_pred = model(x)
+    current_loss = model.evaluate(x, y)
+    x = tf.squeeze(x)
+    y = tf.squeeze(y)
+    y_pred = tf.squeeze(y_pred)
+    
+    xs.append(x.numpy())
+    ys.append(y_pred.numpy())
+    ls.append(current_loss)
+    p11.set_data(x.numpy(), y.numpy())
+    inputs = tf.linspace(-3.0, 3.0, 30)
+    p12.set_data(inputs, model.predict(inputs))
+    p20.set_data(range(epoch), ls)
+
+    model.train_on_batch(x, y)
+
+    return p11, p12, p20
+
+ani = animation.FuncAnimation(fig, update, frames=range(1, EPOCHS), init_func=init, blit=True, interval=100)
+plt.close()
+ani
 
 
 # Initialize the SGDRegressor model
