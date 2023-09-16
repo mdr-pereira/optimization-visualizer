@@ -12,12 +12,16 @@ def anim_func(f, data_i, data, line: plt.Line2D):
 
 
 def plot(res_i, res_data, data):
-    Writer = animation.writers['ffmpeg']
-    Writer = Writer(fps=10, metadata=dict(artist="Me"), bitrate=-1)
+    print("Plotting...")
+
+    writer = animation.writers['ffmpeg']
+    writer = writer(fps=10, metadata=dict(artist="Me"), bitrate=-1)
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(data)
-    ax2 = ax.twinx()
+    _ = ax.twinx()
     l, = ax.plot([], [], 'r-')
+
     anim = animation.FuncAnimation(fig, anim_func, interval=50, fargs=(res_i, res_data, l), save_count=len(res_i))
-    anim.save("lines.mp4", writer=Writer)
+    anim.save("lines.mp4", writer=writer)
