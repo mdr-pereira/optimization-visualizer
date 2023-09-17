@@ -10,17 +10,20 @@ Additionally, it should also provide functions to enable us to produce the datas
 """
 
 def process_function_str(equation_str: str) -> Callable[[np.float32], np.float32]:
-    x = sp.symbols('x')
+    smbl_x = sp.symbols('x', real=True)
 
     # Parse the input string to create a function
     try:
-        equation = sp.sympify(equation_str)
-        fun = sp.lambdify(x, equation, 'numpy')
+        equation = sp.sympify(equation_str, locals={'x': smbl_x})
+        
+        derivative = sp.lambdify(smbl_x, sp.diff(equation, smbl_x))
+
+        function = sp.lambdify(smbl_x, equation, "numpy")
     except sp.SympifyError:
         print("Invalid input. Please enter a valid polynomial equation.")
         exit(1)
 
-    return fun
+    return equation, function, derivative
 
 def generate_datapoints(function: Callable[[float], float], step: float = 1.0):
     temp = np.arange(XBOUND_MIN, XBOUND_MAX, step, dtype=np.float32)

@@ -1,46 +1,39 @@
 from optimizers.optimizer_interface import OptimizerInterface
 from typing import List, Tuple
 import random as rand
+import constants as const
 
 class SimpleWalker(OptimizerInterface):
 
-    def __init__(self, dataset) -> None:
-        self.MAX_I = len(dataset)
-        self.dataset = dataset
+    def __init__(self, function) -> None:
+        self.name = "Simple Walker"
+        
+        self.function = function
 
 
     def generate_solution(self) -> Tuple[List[int], List[float]]:
-        res_i = []
-        res_data = []
+        agg_x = []
 
-        res = self.step(rand.randint(0, self.MAX_I))
+        x = rand.randint(const.XBOUND_MIN, const.XBOUND_MAX)
+    
+        while x != None:
+            agg_x.append(x)
 
-        while res != None:
-            i, data = res
+            x = self.step(x)
 
-            res_i.append(i)
-            res_data.append(data)
-
-            res = self.step(i)
-
-        return res_i, res_data
+        return agg_x
     
 
-    def step(self, i: int) -> Tuple[int, float] or None:
-        data = self.dataset
+    def step(self, x: int, lr=0.1) -> Tuple[int, float] or None:
+        cur_v = self.function(x)
 
-        cur_v = data[i]
-
-        tmp = data[i + 1] if i == 0 else (data[i - 1] if i == (self.MAX_I - 1) else min(data[i - 1], data[i + 1]))
-
-        tmp = min(cur_v, tmp)
-
-        if tmp == cur_v:
-            return None
-
-        if tmp == data[i - 1]:
-            i -= 1
-        else:
-            i += 1
-
-        return (i, tmp)
+        #Check if the next value is less than the current, w/in bounds.
+        if (self.function(x+lr) < cur_v) and (x+lr < const.XBOUND_MAX):
+            return x+lr
+        
+        #Check if the previous value is less than the current, w/in bounds.
+        if (self.function(x-lr) < cur_v) and (x-lr > const.XBOUND_MIN):
+            return x-lr
+        
+        return None
+        

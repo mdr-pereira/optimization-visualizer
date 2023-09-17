@@ -1,13 +1,14 @@
 from optimizers.optimizer_interface import OptimizerInterface
 from typing import List, Tuple
 import random as rand
+import constants as const
 
 class SimulatedAnnealing(OptimizerInterface):
 
-    def __init__(self, dataset) -> None:
-        self.dataset = dataset
-        self.MAX_I = len(dataset)
-        self.MIN_I = 0
+    def __init__(self, function) -> None:
+        self.name = "Simulated Annealing"
+        
+        self.function = function
 
         self.temp = 100
         self.max_steps = 1000
@@ -15,46 +16,44 @@ class SimulatedAnnealing(OptimizerInterface):
         self.patience = self.MAX_PATIENCE
 
     def generate_solution(self) -> Tuple[List[int], List[float]]:
-        res_i = []
-        res_data = []
+        agg_x = []
 
-        res = self.step(rand.randint(self.MIN_I, self.MAX_I))
-        steps = self.max_steps
+        x = rand.randint(const.XBOUND_MIN, const.XBOUND_MAX)
 
-        while res != None and steps > 0:
-            i, data = res
+        while x != None:
+            agg_x.append(x)
 
-            res_i.append(i)
-            res_data.append(data)
+            x = self.step(x)
 
-            res = self.step(i)
-
-            steps -= 1
             self.temp *= 0.99
 
-        return res_i, res_data
+        return agg_x
     
-    def _get_P(self, cur_v: float, next_v: float) -> float:
-        return next_v-cur_v/self.temp
-    
-    def step(self, i: int) -> Tuple[int, float] or None:
-        data = self.dataset
-    
-        next_i = rand.choice([i-1, i+1])
-        cur_v = data[i]
-        next_v = data[next_i]
 
-        if next_i < self.MIN_I or next_i > self.MAX_I:
-            return (i, cur_v)
+    def get_probability(self, cur_v: float, next_v: float) -> float:
+        return abs(next_v-cur_v)/self.temp
+    
+    
+    def step(self, x: int, lr=0.1) -> Tuple[int, float] or None:
+        cur_v = self.function(x)
+
+        nxt_x = rand.choice([x-lr, x+lr])
+
+        #Checks if the proposed next value is out of bounds. If so, we penalize the patience.
+        if(nxt_x < const.XBOUND_MIN or nxt_x > const.XBOUND_MAX):
+            self.patience -= 1
+            return x
         
-        p = self._get_P(cur_v, next_v)
+        next_v = self.function(nxt_x)
+        p = self.get_probability(cur_v, next_v)
 
         if (next_v < cur_v) or (rand.random() > p):
             self.patience = self.MAX_PATIENCE
-            return (next_i, next_v)
+            return nxt_x
         
+        #If the patience is 0, we return None to stop the loop.
         self.patience -= 1
         if(self.patience == 0):
             return None
 
-        return (i, cur_v)
+        return x
