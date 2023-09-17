@@ -181,8 +181,8 @@ class NeuralNetwork(object):
         self.w0=np.random.randn(hidden_0,784)  
         self.w1=np.random.randn(hidden_1,hidden_0)
         self.w2=np.random.randn(10,hidden_1)
-        self.w2[5][250] = start_a # set starting value for w_a
-        self.w2[5][251] = start_b # set starting value for w_b
+        self.w2[2][0] = start_a # set starting value for w_a
+        self.w2[2][1] = start_b # set starting value for w_b
     
     def train(self, X,y):
         a0 = expit(self.w0 @ X.T)  
@@ -191,8 +191,8 @@ class NeuralNetwork(object):
         # Partial derivatives of costs w.r.t. the weights of the output layer: 
         dw2= (pred - y.T)*pred*(1-pred)  @ a1.T / len(X)   # ... averaged over the sample size
         # Update weights: 
-        self.w2[5][250]=self.w2[5][200] - self.lr * dw2[5][250] 
-        self.w2[5][251]=self.w2[5][201] - self.lr * dw2[5][251] 
+        self.w2[5][0]=self.w2[2][0] - self.lr * dw2[2][0] 
+        self.w2[5][1]=self.w2[2][1] - self.lr * dw2[2][1] 
         costs.append(self.cost(pred,y)) # append cost values to list
     
     def cost(self, pred, y):
@@ -206,10 +206,54 @@ for j in starting_points:
     model=NeuralNetwork(10) # set learning rate to 10
     for i in range(10000):  # 10,000 epochs            
         model.train(X_train[0:N], y_train_oh[0:N]) 
-        weights_2_5_250.append(model.w2[5][200]) # append weight values to list
-        weights_2_5_251.append(model.w2[5][201]) # append weight values to list
+        weights_2_5_250.append(model.w2[2][0]) # append weight values to list
+        weights_2_5_251.append(model.w2[2][1]) # append weight values to list
 
 # Create sublists of costs and weight values for each starting point: 
 costs = np.split(np.array(costs),3) 
 weights_2_5_250 = np.split(np.array(weights_2_5_250),3)
 weights_2_5_251 = np.split(np.array(weights_2_5_251),3)
+
+
+fig = plt.figure(figsize=(10,10)) # create figure
+ax = fig.add_subplot(111,projection='3d' ) 
+line_style=["dashed", "dashdot", "dotted"] #linestyles
+fontsize_=27 # set axis label fontsize
+labelsize_=17 # set tick label fontsize
+ax.view_init(elev=30, azim=-10)
+ax.set_xlabel(r'$w_a$', fontsize=fontsize_, labelpad=17)
+ax.set_ylabel(r'$w_b$', fontsize=fontsize_, labelpad=5)
+ax.set_zlabel("costs", fontsize=fontsize_, labelpad=-35)
+ax.tick_params(axis="x", pad=12, which="major", labelsize=labelsize_)
+ax.tick_params(axis="y", pad=0, which="major", labelsize=labelsize_)
+ax.tick_params(axis="z", pad=8, which="major", labelsize=labelsize_)
+ax.set_zlim(4.75,4.802) # set range for z-values in the plot
+
+# Define which epochs to plot:
+p1=list(np.arange(0,200,20))
+p2=list(np.arange(200,9000,100))
+points_=p1+p2
+
+camera=Camera(fig) # create Camera object
+for i in points_:
+    # Plot the three trajectories of gradient descent...
+    #... each starting from its respective starting point
+    #... and each with a unique linestyle:
+    for j in range(3): 
+        ax.plot(weights_2_5_250[j][0:i],weights_2_5_251[j][0:i],costs[j][0:i],
+                linestyle=line_style[j],linewidth=2,
+                color="black", label=str(i))
+        ax.scatter(weights_2_5_250[j][i],weights_2_5_251[j][i],costs[j][i],
+                   marker="o", s=15**2,
+               color="black", alpha=1.0)
+    # Surface plot (= loss landscape):
+    ax.plot_surface(M1, M2, Z_100, cmap='terrain', 
+                             antialiased=True,cstride=1,rstride=1, alpha=0.75)
+    ax.legend([f'epochs: {i}'], loc=(0.25, 0.8),fontsize=17) # set position of legend
+    plt.tight_layout() 
+    camera.snap() # take snapshot after each iteration
+    
+animation = camera.animate(interval = 5, # set delay between frames in milliseconds
+                          repeat = False,
+                          repeat_delay = 0)
+animation.save('gd_1.gif', writer="Pillow", dpi=100)  # save animation
